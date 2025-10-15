@@ -1,11 +1,11 @@
 ;;; pass-it-on.el --- Forward input to another X window. -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2025 Your Name
+;; Copyright (C) 2025 Raj Patil
 
-;; Author: Your Name <your.email@example.com>
+;; Author: Raj Patil <raj@cognware.com>
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1"))
-;; Keywords: convenience, window-management, x11
+;; Keywords: convenience, window-management, x11, control
 
 ;;; Commentary:
 
