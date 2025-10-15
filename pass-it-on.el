@@ -29,12 +29,14 @@
 (defun pass-it-on-select-window ()
   "Select a target window for pass-it-on-mode using `xwininfo`."
   (interactive)
+  ;; TODO
   ;; Implementation to follow
   (message "pass-it-on-select-window not implemented yet."))
 
 (defun pass-it-on-forward-input ()
   "Forward the last keypress to the target window using xdotool."
   (interactive)
+  ;; TODO
   ;; Implementation to follow
   (message "pass-it-on-forward-input not implemented yet."))
 
@@ -49,7 +51,10 @@
         (when (not pass-it-on-target-window-id)
           (call-interactively #'pass-it-on-select-window))
         (if pass-it-on-target-window-id
-            (message "Pass-It-On mode enabled for window %s." pass-it-on-target-window-id)
+            (progn
+              (message "Pass-It-On mode enabled for window %s." pass-it-on-target-window-id)
+              ;; TODO: Set up keymap to forward input.
+              )
           (progn
             (message "No target window selected. Disabling mode.")
             (setq pass-it-on-mode nil))))
