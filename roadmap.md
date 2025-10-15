@@ -2,23 +2,23 @@
 
 This document outlines the development plan for `pass-it-on.el`, following a test-driven development (TDD) approach.
 
-## Phase 1: Implement Window Selection
+## ~~Phase 1: Implement Window Selection~~ (DONE)
 
-The immediate goal is to make the existing test suite pass. This involves implementing the `pass-it-on-select-window` function.
+~~The immediate goal is to make the existing test suite pass. This involves implementing the `pass-it-on-select-window` function.~~
 
-1.  **Implement `pass-it-on-select-window`**:
-    -   In `pass-it-on.el`, modify the function to call the external `xwininfo` command using `shell-command-to-string`.
-    -   Use a regular expression to parse the output and extract the window ID (e.g., `0x...`).
-    -   If a window ID is found, set the `pass-it-on-target-window-id` variable.
-    -   If `xwininfo` fails or the output is not as expected, ensure the variable is not changed and optionally inform the user.
+1.  ~~**Implement `pass-it-on-select-window`**~~:
+    -   ~~In `pass-it-on.el`, modify the function to call the external `xwininfo` command using `shell-command-to-string`.~~
+    -   ~~Use a regular expression to parse the output and extract the window ID (e.g., `0x...`).~~
+    -   ~~If a window ID is found, set the `pass-it-on-target-window-id` variable.~~
+    -   ~~If `xwininfo` fails or the output is not as expected, ensure the variable is not changed and optionally inform the user.~~
 
-2.  **Verify Implementation**:
-    -   Run `make test`.
-    -   All tests, including `pass-it-on-select-window-sets-id`, should now pass.
+2.  ~~**Verify Implementation**~~:
+    -   ~~Run `make test`.~~
+    -   ~~All tests, including `pass-it-on-select-window-sets-id`, should now pass.~~
 
 ## Phase 2: Implement Core Input Forwarding
 
-With window selection working, the next step is to implement the main feature: forwarding keyboard input.
+With window selection working, the next step is to implement the main feature: forwarding keyboard input. The core forwarding function and its helpers have been implemented.
 
 1.  **Add Tests for Input Forwarding**:
     -   In `pass-it-on-tests.el`, create new `ert-deftest`s for `pass-it-on-forward-input`.
@@ -27,10 +27,10 @@ With window selection working, the next step is to implement the main feature: f
         - The correct window ID from `pass-it-on-target-window-id`.
         - The correct key string translation for various Emacs key events (e.g., `a`, `A`, `C-c`).
 
-2.  **Implement `pass-it-on-forward-input`**:
-    -   This function will be triggered by user input when `pass-it-on-mode` is active.
-    -   It needs to take the last key event (`last-input-event`) and convert it into a string that `xdotool` can understand. This is the most complex part. Start with simple characters and then add support for modifiers (Control, Meta, Shift).
-    -   Use `call-process` to execute `xdotool type --window <window_id> '<key_string>'`.
+2.  **~~Implement `pass-it-on-forward-input`~~** (DONE):
+    -   ~~This function will be triggered by user input when `pass-it-on-mode` is active.~~
+    -   ~~It needs to take the last key event (`last-command-event`) and convert it into a string that `xdotool` can understand. This is the most complex part. Start with simple characters and then add support for modifiers (Control, Meta, Shift).~~
+    -   ~~Use `call-process` to execute `xdotool key --window <window_id> '<key_string>'`.~~
 
 3.  **Activate the Keymap**:
     -   In the `define-minor-mode` block for `pass-it-on-mode`, replace the `;; TODO` with code that sets up a keymap.
