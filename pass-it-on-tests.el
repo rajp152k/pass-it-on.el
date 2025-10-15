@@ -50,7 +50,7 @@
   (let ((pass-it-on-target-window-id "pre-existing-id")
         (fake-xwininfo-output "xwininfo: Aborted.\n"))
     (cl-letf (((symbol-function 'shell-command-to-string)
-               (lambda (command) fake-xwininfo-output)))
+               (lambda (_) fake-xwininfo-output)))
       (pass-it-on-select-window)
       ;; The ID should not be changed if parsing fails.
       (should (string= pass-it-on-target-window-id "pre-existing-id")))))

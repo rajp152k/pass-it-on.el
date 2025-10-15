@@ -29,9 +29,12 @@
 (defun pass-it-on-select-window ()
   "Select a target window for pass-it-on-mode using `xwininfo`."
   (interactive)
-  ;; TODO
-  ;; Implementation to follow
-  (message "pass-it-on-select-window not implemented yet."))
+  (let ((output (shell-command-to-string "xwininfo")))
+    (if (string-match "Window id: \\(0x[0-9a-fA-F]+\\)" output)
+        (let ((window-id (match-string 1 output)))
+          (setq pass-it-on-target-window-id window-id)
+          (message "Pass-It-On target window set to: %s" window-id))
+      (message "Could not get window ID from xwininfo."))))
 
 (defun pass-it-on-forward-input ()
   "Forward the last keypress to the target window using xdotool."
