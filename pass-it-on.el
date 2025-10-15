@@ -18,6 +18,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defgroup pass-it-on nil
   "Forward input to another X window."
   :group 'applications)
@@ -36,12 +38,56 @@
           (message "Pass-It-On target window set to: %s" window-id))
       (message "Could not get window ID from xwininfo."))))
 
+(defun pass-it-on--char-to-keysym (char)
+  "Convert CHAR to an X11 keysym name string."
+  (pcase char
+    (?\s "space")
+    (?\t "Tab")
+    (?\r "Return")
+    (?\e "Escape")
+    (?\b "BackSpace")
+    (?\+ "plus")
+    (?- "minus")
+    (?_ "underscore")
+    (?= "equal")
+    (?` "grave")
+    (?. "period")
+    (?, "comma")
+    (?: "colon")
+    (?\; "semicolon")
+    (?< "less")
+    (?> "greater")
+    (?/ "slash")
+    (?\\ "backslash")
+    (?| "bar")
+    (?\' "apostrophe")
+    (?\" "quotedbl")
+    (_ (char-to-string char))))
+
+(defun pass-it-on--event-to-xdotool-key-string (event)
+  "Convert an Emacs input EVENT to a string for `xdotool key`."
+  (let* ((base-key (event-basic-type event))
+         (modifiers (event-modifiers event)))
+    (let ((key-name (if (characterp base-key)
+                        (pass-it-on--char-to-keysym base-key)
+                      (downcase (format "%s" base-key))))
+          (xdotool-mods (cl-loop for mod in modifiers
+                                 collect (pcase mod
+                                           ('shift "shift")
+                                           ('control "control")
+                                           ('meta "alt")
+                                           ('alt "alt")
+                                           ('super "super")
+                                           ('hyper "hyper")))))
+      (string-join (append xdotool-mods (list key-name)) "+"))))
+
 (defun pass-it-on-forward-input ()
   "Forward the last keypress to the target window using xdotool."
   (interactive)
-  ;; TODO
-  ;; Implementation to follow
-  (message "pass-it-on-forward-input not implemented yet."))
+  (when pass-it-on-target-window-id
+    (let ((key-string (pass-it-on--event-to-xdotool-key-string last-command-event)))
+      (call-process "xdotool" nil 0 nil "key" "--window"
+                    pass-it-on-target-window-id key-string))))
 
 ;;;###autoload
 (define-minor-mode pass-it-on-mode
@@ -50,17 +96,14 @@
   :lighter " PassItOn"
   :keymap (make-sparse-keymap)
   (if pass-it-on-mode
-      (progn
-        (when (not pass-it-on-target-window-id)
-          (call-interactively #'pass-it-on-select-window))
-        (if pass-it-on-target-window-id
-            (progn
-              (message "Pass-It-On mode enabled for window %s." pass-it-on-target-window-id)
-              ;; TODO: Set up keymap to forward input.
-              )
+      (if pass-it-on-target-window-id
           (progn
-            (message "No target window selected. Disabling mode.")
-            (setq pass-it-on-mode nil))))
+            (message "Pass-It-On mode enabled for window %s." pass-it-on-target-window-id)
+            ;; TODO: Set up keymap to forward input.
+            )
+        (progn
+          (message "No target window selected. Disabling mode.")
+          (setq pass-it-on-mode nil)))
     (message "Pass-It-On mode disabled.")))
 
 (provide 'pass-it-on)
